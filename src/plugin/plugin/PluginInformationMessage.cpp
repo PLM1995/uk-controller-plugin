@@ -51,6 +51,7 @@ namespace UKControllerPlugin::Plugin {
         std::wstring message;
         message += L"UK Controller Plugin\r\n";
         message += L"Version " + HelperFunctions::ConvertToWideString(PluginVersion::version) + L"\r\n";
+        message += L"PLM Build Testing\r\n";
         message +=
             L"Copyright \xa9 " + std::to_wstring(DATE_BASE_YEAR + buf.tm_year) + L" VATSIM United Kingdom Division";
 
