@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-ARG CURL_VERSION=7.62.0
+ARG CURL_VERSION=7.76.1
 ARG LLVM_VERSION=18
 ARG XWIN_VERSION=0.8.0
 ARG XWIN_TRIPLE=x86_64-unknown-linux-musl
@@ -86,7 +86,7 @@ RUN <<-EOF
 	EOF2
 	ln -s `which llvm-mt-$LLVM_VERSION` mt
 
-	chmod u+x cc lib link rc
+	chmod a+x cc lib link rc
 
 	<<-EOF2 cat > xwin.cmake
 		set(CMAKE_SYSTEM_NAME Windows)
@@ -119,14 +119,15 @@ RUN <<-EOF
 	sed -ie "s/\\\\xa9/(c)/g" lib/libcurl.rc src/curl.rc # curl/curl#7765
 	cmake --fresh \
 		-DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN \
+		-DBUILD_SHARED_LIBS=OFF -DCMAKE_USE_SCHANNEL=ON \
 		-DBUILD_CURL_EXE=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF \
 		-DCURL_CA_PATH=none -DCURL_USE_LIBPSL=OFF \
 		-G Ninja -B build
 	ninja -C build
 
 	cd build/lib
-	cp libcurl_imp.lib libcurl_a.lib
-	cp libcurl_imp.lib libcurl_a_debug.lib
+	cp libcurl.lib libcurl_a.lib
+	cp libcurl.lib libcurl_a_debug.lib
 EOF
 
 ENV CURL_INCLUDEDIR=/opt/curl/include/
